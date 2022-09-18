@@ -11,39 +11,48 @@ import org.testng.Assert;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.relevantcodes.extentreports.LogStatus;
+
 import Pages.LoginPage;
 
 public class SimplilearnLoginTest extends BaseClass {
-	
+
 	@Test
 	public void Test1() {
+		// customized message can be added in extentReport
+		test.log(LogStatus.INFO, "Test1 Started");
 
 		LoginPage lp = new LoginPage(driver);
 		lp.Login("Priya@gmail.com","Abc@1234");
-		
+
 		// step6. Validate the error message
 		WebElement Error = driver.findElement(By.id("msg_box"));
-		
+
 		String ActualError = Error.getText();
 		String ExpError = "The email or password you have entered is invalid.";
-		
+
 		Assert.assertTrue(Error.isDisplayed());
 		Assert.assertEquals(ActualError, ExpError);
-		
-	}
-		@Test
-		@Parameters({"uname","Pwd"})
-		public void Test2(String UserName,String Password) {
 
-			LoginPage lp = new LoginPage(driver);
-			lp.Login(UserName,Password);
+	}
+	@Test
+	@Parameters({"uname","Pwd"})
+	public void Test2(String UserName,String Password) {
+
+		test.log(LogStatus.INFO, "Test2 Started");
 		
-		}
-		@Test
-		public void Test3() {
-		String UserName = sheet.getRow(1).getCell(0).getStringCellValue();
-        String Password = sheet.getRow(1).getCell(1).getStringCellValue();
-        LoginPage lp = new LoginPage(driver);
+		LoginPage lp = new LoginPage(driver);
 		lp.Login(UserName,Password);
-		}
+
+	}
+	@Test
+	public void Test3() {
+
+		test.log(LogStatus.INFO, "Test3 Started");
+		
+		String UserName = sheet.getRow(1).getCell(0).getStringCellValue();
+		String Password = sheet.getRow(1).getCell(1).getStringCellValue();
+		LoginPage lp = new LoginPage(driver);
+		lp.Login(UserName,Password);
+	}
 }

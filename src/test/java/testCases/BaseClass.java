@@ -3,6 +3,7 @@ package testCases;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -14,6 +15,9 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeTest;
 
+import com.relevantcodes.extentreports.ExtentReports;
+import com.relevantcodes.extentreports.ExtentTest;
+
 public class BaseClass {
 
 	// Globally declaring the Webdriver driver
@@ -22,22 +26,33 @@ public class BaseClass {
 	XSSFWorkbook wbook;
 	XSSFSheet sheet;
 
+	// This is used to get the extended report
+	ExtentReports report;
+    ExtentTest test;
+    
 	@BeforeTest
 	public void DataSetup() throws IOException {
 		FileInputStream fis = new FileInputStream("exceldata.xlsx");
 
 		wbook = new XSSFWorkbook(fis);	//passing the object fis into the XSSFWorkbook constructor
 		sheet = wbook.getSheet("Sheet1"); // Since the excel contains data in sheet1
+		
+		report = new ExtentReports("ExtentReport.html");
 	}
 
 	@AfterTest
 	public void DataClean() throws IOException {
 		wbook.close();
+		
+		report.flush();
+		report.close();
 	}
 
 	// using BeforeMethod here for the preconditions required to open login page
 	@BeforeMethod
-	public void setup() {
+	public void setup(Method method) {
+		
+		test = report.startTest(method.getName());
 		System.setProperty("webdriver.chrome.driver", "chromedriver.exe");
 
 		driver = new ChromeDriver();
@@ -48,7 +63,7 @@ public class BaseClass {
 
 	@AfterMethod
 	public void TearDown() {
-
+		report.endTest(test);
 		//Since this common to close the driver
 		driver.close();
 	}
